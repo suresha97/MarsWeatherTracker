@@ -1,34 +1,12 @@
-import pandas as pd
 from datetime import date
-import plotly.express as px
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from src.aws_rds.mars_weather_data_table import MarsWeatherDataRDSDatabase
+from src.app_utils import make_plotly_graph, get_latest_mars_weather_data
 
-mars_weather_data_rds_database = MarsWeatherDataRDSDatabase(
-    "postgres",
-    "Unn11997*",
-    "mars-weather-data.c0wmlpzuprn2.eu-west-1.rds.amazonaws.com",
-    5432,
-    "curiosity_mars_weather_data"
-)
-
-mars_weather_data_df = mars_weather_data_rds_database.query_data_from_table_into_dataframe(
-    "SELECT * FROM mars_weather_data"
-)
-mars_weather_data_df.sort_values("terrestrial_date", inplace=True)
-
-def make_plotly_graph(parameters):
-    fig = px.line(**parameters["plot"])
-
-    for i, new_name in enumerate(parameters["column_labels"]):
-        fig.data[i].name = new_name
-
-    return fig
-
+mars_weather_data_df = get_latest_mars_weather_data()
 
 app = dash.Dash(__name__)
 
@@ -126,5 +104,6 @@ def update_graph(selected_quantity, start_date, end_date):
     return fig
 
 
+### BUG : Y-AXIS scale messed up when plotting multiplt lines
 if __name__ == "__main__":
     app.run_server(debug=True)
