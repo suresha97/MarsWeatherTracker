@@ -25,4 +25,5 @@ class CuriosityRoverWeatherDataCollector:
             "feedtype": "json"
         }
         raw_mars_weather_data = requests.get(API_BASE_URL, params=parameters)
+
         return raw_mars_weather_data.json()
