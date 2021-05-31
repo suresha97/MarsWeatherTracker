@@ -130,3 +130,10 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# Local Datasets
+local_datasets/
+
+# AWS Deployment
+aws_deployment/lambda_code_uri
+.aws_sam

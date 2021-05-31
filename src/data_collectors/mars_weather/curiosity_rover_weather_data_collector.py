@@ -1,6 +1,6 @@
 import requests
 
-from data_collectors.utils import save_json_to_s3
+from utils import save_json_to_s3
 
 API_BASE_URL = "https://mars.nasa.gov/rss/api"
 

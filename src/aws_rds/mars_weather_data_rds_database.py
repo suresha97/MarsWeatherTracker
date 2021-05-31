@@ -1,8 +1,7 @@
 from sqlalchemy import create_engine
 import pandas as pd
 
-from data_collectors.utils import load_json_from_s3_as_dict
-from aws_lambda.save_processed_weather_data_to_rds_table import process_raw_mars_weather_data
+from utils import load_json_from_s3_as_dict
 
 
 class MarsWeatherDataRDSDatabase:
@@ -44,17 +43,14 @@ if __name__ == "__main__":
     s3_key = "raw_mars_weather_data.json"
 
     raw_mars_weather_data = load_json_from_s3_as_dict(s3_bucket, s3_key)
-    mars_weather_data = process_raw_mars_weather_data(raw_mars_weather_data)
-    print(mars_weather_data.head())
-    print(mars_weather_data.shape)
-    print(mars_weather_data.columns)
+    #mars_weather_data = process_raw_mars_weather_data(raw_mars_weather_data)
 
     test_rds = MarsWeatherDataRDSDatabase("postgres", "Unn11997*", "mars-weather-data.c0wmlpzuprn2.eu-west-1.rds.amazonaws.com", 5432, "curiosity_mars_weather_data" )
 
-    test_rds_engine = test_rds.get_database_engine()
-    mars_weather_data.to_sql("mars_weather_data", test_rds_engine, if_exists="append", index=False)
+    test_rds.create_new_table_from_dataframe(mars_weather_data, "curiosity_mars_weather_data")
+
     print("Querying data from RDS...")
-    query = "SELECT * FROM mars_weather_data"
+    query = "SELECT * FROM curiosity_mars_weather_data"
     query_data = test_rds.query_data_from_table_into_dataframe(query)
     print(type(query_data))
     print(query_data.head())

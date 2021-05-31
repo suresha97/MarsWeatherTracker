@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: AWS CloudFormation stack of Mars Weather Tracker.
+Globals:
+  Function:
+    Runtime: python3.8
+    CodeUri: lambda_code_uri/.
+    Timeout: 900
+    MemorySize: 128
+    EventInvokeConfig:
+      MaximumRetryAttempts: 0
+Resources:
+  CollectRawMarsWeatherData:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "CollectRawMarsWeatherData-function"
+      Handler: aws_lambda.collect_raw_mars_weather_data.lambda_handler
+      Policies:
+        - AmazonS3FullAccess
+  SaveProcessedMarsWeatherData:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "SaveProcessedMarsWeatherData-function"
+      Handler: aws_lambda.save_processed_mars_weather_data.lambda_handler
+      Policies:
+        - AmazonS3FullAccess
