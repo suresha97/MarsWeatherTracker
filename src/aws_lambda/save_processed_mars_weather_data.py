@@ -36,3 +36,7 @@ def lambda_handler(event, context):
     mars_weather_data_rds_database.create_new_table_from_dataframe(mars_weather_data, "curiosity_mars_weather_data")
 
     return
+
+
+if __name__ == "__main__":
+    lambda_handler({}, None)

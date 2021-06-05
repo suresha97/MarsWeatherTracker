@@ -12,3 +12,7 @@ def lambda_handler(event, context):
     curiosity_rover_weather_data_collector.save_raw_mars_weather_data_to_s3()
 
     return
+
+
+if __name__ == "__main__":
+    lambda_handler({}, None)

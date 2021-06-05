@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine
 import pandas as pd
 
-from utils import load_json_from_s3_as_dict
-
 
 class MarsWeatherDataRDSDatabase:
     def __init__(self, user, password, host, port, database_name):
@@ -36,23 +34,3 @@ class MarsWeatherDataRDSDatabase:
 
     def add_entries_to_table(self, dataframe, table_name):
         dataframe.to_sql(table_name, self.database_engine, if_exists="append", index=False)
-
-
-if __name__ == "__main__":
-    s3_bucket = "mars-weather-data"
-    s3_key = "raw_mars_weather_data.json"
-
-    raw_mars_weather_data = load_json_from_s3_as_dict(s3_bucket, s3_key)
-    #mars_weather_data = process_raw_mars_weather_data(raw_mars_weather_data)
-
-    test_rds = MarsWeatherDataRDSDatabase("postgres", "Unn11997*", "mars-weather-data.c0wmlpzuprn2.eu-west-1.rds.amazonaws.com", 5432, "curiosity_mars_weather_data" )
-
-    test_rds.create_new_table_from_dataframe(mars_weather_data, "curiosity_mars_weather_data")
-
-    print("Querying data from RDS...")
-    query = "SELECT * FROM curiosity_mars_weather_data"
-    query_data = test_rds.query_data_from_table_into_dataframe(query)
-    print(type(query_data))
-    print(query_data.head())
-    print(query_data.shape)
-    print(query_data.columns)
