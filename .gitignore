@@ -136,4 +136,4 @@ local_datasets/
 
 # AWS Deployment
 aws_deployment/lambda_code_uri
-.aws_sam
+.aws-sam
