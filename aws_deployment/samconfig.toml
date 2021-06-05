@@ -1,0 +1,10 @@
+version = 0.1
+[env]
+[env.deploy]
+[env.deploy.parameters]
+stack_name = "MarsWeatherTrackerStack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-e8rjm0n8pm5b"
+s3_prefix = "MarsWeatherTrackerStack"
+region = "eu-west-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
