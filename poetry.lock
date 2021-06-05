@@ -1,19 +1,19 @@
 [[package]]
 name = "boto3"
-version = "1.17.84"
+version = "1.17.88"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
-botocore = ">=1.20.84,<1.21.0"
+botocore = ">=1.20.88,<1.21.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.4.0,<0.5.0"
 
 [[package]]
 name = "botocore"
-version = "1.20.84"
+version = "1.20.88"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -31,7 +31,7 @@ crt = ["awscrt (==0.11.15)"]
 name = "brotli"
 version = "1.0.9"
 description = "Python bindings for the Brotli compression library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -55,7 +55,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "click"
 version = "8.0.1"
 description = "Composable command line interface toolkit"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -67,7 +67,7 @@ importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 name = "colorama"
 version = "0.4.4"
 description = "Cross-platform colored terminal text."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -75,7 +75,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "dash"
 version = "1.20.0"
 description = "A Python framework for building reactive web-apps. Developed by Plotly."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -97,7 +97,7 @@ testing = ["pytest-sugar (>=0.9.4)", "lxml (>=4.6.2)", "selenium (>=3.141.0)", "
 name = "dash-bootstrap-components"
 version = "0.12.2"
 description = "Bootstrap themed components for use in Plotly Dash"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
@@ -111,7 +111,7 @@ pandas = ["numpy", "pandas"]
 name = "dash-core-components"
 version = "1.16.0"
 description = "Core component suite for Dash"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -119,7 +119,7 @@ python-versions = "*"
 name = "dash-html-components"
 version = "1.1.3"
 description = "Vanilla HTML components for Dash"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -127,7 +127,7 @@ python-versions = "*"
 name = "dash-renderer"
 version = "1.9.1"
 description = "Front-end component renderer for Dash"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -135,7 +135,7 @@ python-versions = "*"
 name = "dash-table"
 version = "4.11.3"
 description = "Dash table"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -143,7 +143,7 @@ python-versions = "*"
 name = "flask"
 version = "2.0.1"
 description = "A simple framework for building complex web applications."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -161,7 +161,7 @@ dotenv = ["python-dotenv"]
 name = "flask-compress"
 version = "1.9.0"
 description = "Compress responses in your Flask app with gzip, deflate or brotli."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -173,7 +173,7 @@ flask = "*"
 name = "future"
 version = "0.18.2"
 description = "Clean single-source support for Python 3 and 2"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -198,7 +198,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "importlib-metadata"
-version = "4.4.0"
+version = "4.5.0"
 description = "Read metadata from Python packages"
 category = "main"
 optional = false
@@ -216,7 +216,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 name = "itsdangerous"
 version = "2.0.1"
 description = "Safely pass data to untrusted environments and back."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -224,7 +224,7 @@ python-versions = ">=3.6"
 name = "jinja2"
 version = "3.0.1"
 description = "A very fast and expressive template engine."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -246,7 +246,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "markupsafe"
 version = "2.0.1"
 description = "Safely add untrusted strings to HTML/XML markup."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -278,7 +278,7 @@ test = ["pytest (>=5.0.1)", "pytest-xdist", "hypothesis (>=3.58)"]
 name = "plotly"
 version = "4.14.3"
 description = "An open-source, interactive data visualization library for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -335,7 +335,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 name = "retrying"
 version = "1.3.3"
 description = "Retrying"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -421,7 +421,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 name = "werkzeug"
 version = "2.0.1"
 description = "The comprehensive WSGI web application library."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -443,16 +443,16 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.1"
-content-hash = "b62022e6549f573315f910dc8bbee2e55baf8419a6c3b436f8eb2d86d08291cf"
+content-hash = "3cb055355b566d0474c6f282219882cedd10a9614dc4e5ba9cbd693042f99753"
 
 [metadata.files]
 boto3 = [
-    {file = "boto3-1.17.84-py2.py3-none-any.whl", hash = "sha256:1d24c6d1f5db4b52bb29f1dfe13fd3e9d95d9fa4634b0638a096f5a884173cde"},
-    {file = "boto3-1.17.84.tar.gz", hash = "sha256:8ee8766813864796be6c87ad762c6da4bfef603977931854a38f49fe4db06495"},
+    {file = "boto3-1.17.88-py2.py3-none-any.whl", hash = "sha256:13afcc5e2fcc5e4f9eab1ee46a769cf738a259dcd45f71ee79255f18973e4584"},
+    {file = "boto3-1.17.88.tar.gz", hash = "sha256:a715ca6c4457d56ea3e3efde9bdc8be41c29b2f2a904fbd12befdb9cb5e289e4"},
 ]
 botocore = [
-    {file = "botocore-1.20.84-py2.py3-none-any.whl", hash = "sha256:75e1397b80aa8757a26636b949eebd20b3cf67e8f1ed80dc01170907e06ea45d"},
-    {file = "botocore-1.20.84.tar.gz", hash = "sha256:bc59eb748fcb07835613ebea6dcc2600ae1a8be0fae30e40b9c1e81b73262296"},
+    {file = "botocore-1.20.88-py2.py3-none-any.whl", hash = "sha256:be3cb73fab60a2349e2932bd0cbbe7e7736e3a2cd8c05b539d362ff3e406be76"},
+    {file = "botocore-1.20.88.tar.gz", hash = "sha256:bc989edab52d4788aadd8d1aff925f5c6a7cbc68900bfdb8e379965aeac17317"},
 ]
 brotli = [
     {file = "Brotli-1.0.9-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:268fe94547ba25b58ebc724680609c8ee3e5a843202e9a381f6f9c5e8bdb5c70"},
@@ -590,8 +590,8 @@ idna = [
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
 ]
 importlib-metadata = [
-    {file = "importlib_metadata-4.4.0-py3-none-any.whl", hash = "sha256:960d52ba7c21377c990412aca380bf3642d734c2eaab78a2c39319f67c6a5786"},
-    {file = "importlib_metadata-4.4.0.tar.gz", hash = "sha256:e592faad8de1bda9fe920cf41e15261e7131bcf266c30306eec00e8e225c1dd5"},
+    {file = "importlib_metadata-4.5.0-py3-none-any.whl", hash = "sha256:833b26fb89d5de469b24a390e9df088d4e52e4ba33b01dc5e0e4f41b81a16c00"},
+    {file = "importlib_metadata-4.5.0.tar.gz", hash = "sha256:b142cc1dd1342f31ff04bb7d022492b09920cb64fed867cd3ea6f80fe3ebd139"},
 ]
 itsdangerous = [
     {file = "itsdangerous-2.0.1-py3-none-any.whl", hash = "sha256:5174094b9637652bdb841a3029700391451bd092ba3db90600dea710ba28e97c"},
