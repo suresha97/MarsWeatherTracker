@@ -85,7 +85,7 @@ def update_graph(selected_quantity, start_date, end_date):
                 "plot": {
                     "data_frame": mars_weather_data_filtered,
                     "x": "terrestrial_date",
-                    "y": ["min_temp", "max_temp"],
+                    "samconfig.toml": ["min_temp", "max_temp"],
                     "labels": {
                         "terrestrial_date": "Date",
                         "value": "Temperature"
@@ -103,7 +103,7 @@ def update_graph(selected_quantity, start_date, end_date):
                 "plot": {
                     "data_frame": mars_weather_data_filtered,
                     "x": "terrestrial_date",
-                    "y": ["min_gts_temp", "max_gts_temp"],
+                    "samconfig.toml": ["min_gts_temp", "max_gts_temp"],
                     "labels": {
                         "terrestrial_date": "Date",
                         "value": "Temperature"
@@ -120,7 +120,7 @@ def update_graph(selected_quantity, start_date, end_date):
                 "plot": {
                     "data_frame": mars_weather_data_filtered,
                     "x": "terrestrial_date",
-                    "y": ["pressure"],
+                    "samconfig.toml": ["pressure"],
                     "labels": {
                         "terrestrial_date": "Date",
                         "value": "Pressure"
