@@ -1,6 +1,6 @@
 import requests
 
-from utils import save_json_to_s3
+from utils.s3_utils import save_json_to_s3
 
 API_BASE_URL = "https://mars.nasa.gov/rss/api"
 
@@ -26,4 +26,4 @@ class CuriosityRoverWeatherDataCollector:
         }
         raw_mars_weather_data = requests.get(API_BASE_URL, params=parameters)
 
-        return raw_mars_weather_data.json()
+        return raw_mars_weather_data
