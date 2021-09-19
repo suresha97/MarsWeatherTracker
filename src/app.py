@@ -33,7 +33,7 @@ app.layout = html.Div(
             [
                 dbc.Col(dcc.Dropdown(
                     id="select_quantity",
-                    options= [
+                    options=[
                          {"label": "Air Temperature", "value": "air_temp"},
                          {"label": "Ground Temperature", "value": "ground_temp"},
                          {"label": "Pressure", "value": "pressure"}
@@ -85,7 +85,7 @@ def update_graph(selected_quantity, start_date, end_date):
                 "plot": {
                     "data_frame": mars_weather_data_filtered,
                     "x": "terrestrial_date",
-                    "samconfig.toml": ["min_temp", "max_temp"],
+                    "y": ["min_temp", "max_temp"],
                     "labels": {
                         "terrestrial_date": "Date",
                         "value": "Temperature"
@@ -103,7 +103,7 @@ def update_graph(selected_quantity, start_date, end_date):
                 "plot": {
                     "data_frame": mars_weather_data_filtered,
                     "x": "terrestrial_date",
-                    "samconfig.toml": ["min_gts_temp", "max_gts_temp"],
+                    "y": ["min_gts_temp", "max_gts_temp"],
                     "labels": {
                         "terrestrial_date": "Date",
                         "value": "Temperature"
@@ -120,7 +120,7 @@ def update_graph(selected_quantity, start_date, end_date):
                 "plot": {
                     "data_frame": mars_weather_data_filtered,
                     "x": "terrestrial_date",
-                    "samconfig.toml": ["pressure"],
+                    "y": ["pressure"],
                     "labels": {
                         "terrestrial_date": "Date",
                         "value": "Pressure"

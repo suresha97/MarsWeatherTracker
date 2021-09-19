@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import json
+import time
 
 import sklearn.metrics as metrics
 import torch
@@ -8,13 +10,14 @@ import torch.nn as nn
 _MODEL_SAVE_PATH = "../trained_models"
 
 
-class TorchForecaster(ABC, nn.Module):
-    def __init__(self, training_parameters, forecasting_data):
+class TorchTrainer(ABC, nn.Module):
+    def __init__(self, training_parameters, forecasting_data, quantity_to_forecast):
         super().__init__()
         super(ABC, self).__init__()
         self._training_parameters = training_parameters
         self._forecasting_data = forecasting_data
         self._train_loader = self._get_torch_data_loader(self._training_parameters["batch_size"])
+        self._quantity_to_forecast = quantity_to_forecast
 
     def _get_torch_data_loader(self, batch_size, shuffle=False):
         train_features, train_labels = self._forecasting_data["train_data"]
@@ -39,7 +42,7 @@ class TorchForecaster(ABC, nn.Module):
 
             running_loss = 0
             for batch, (train_in, train_out) in enumerate(self._train_loader):
-                model_preds = self._forward_pass(train_in)
+                model_preds = self._model.forward(train_in)
 
                 loss = loss_criterion(model_preds, train_out)
 
@@ -52,9 +55,9 @@ class TorchForecaster(ABC, nn.Module):
             training_loss_over_epochs.append(running_loss / len(self._train_loader))
 
             with torch.no_grad():
-                self.eval()
+                self._model.eval()
 
-                val_preds = self._forward_pass(val_features)
+                val_preds = self._model.forward(val_features)
                 val_loss = loss_criterion(val_preds, val_labels)
                 validation_loss_over_epochs.append(val_loss.item())
 
@@ -72,8 +75,8 @@ class TorchForecaster(ABC, nn.Module):
                 break
 
     def predict(self, prediction_features):
-        self.eval()
-        return self._forward_pass(prediction_features)
+        self._model.eval()
+        return self._model.forward(prediction_features)
 
     def evaluate_model(self):
         test_features, test_labels = self._forecasting_data["test_data"]
@@ -92,7 +95,21 @@ class TorchForecaster(ABC, nn.Module):
         )
 
     def save_model(self):
-        torch.save(self.state_dict(), f"{_MODEL_SAVE_PATH}/{self._model_save_name}.pt")
+        torch.save(
+            self._model.state_dict(), f"{_MODEL_SAVE_PATH}/{self._quantity_to_forecast}/"
+                                      f"{self._model_save_name}_{self._save_time}.pt"
+        )
+
+    def save_model_architecture(self):
+        with open(
+                f"{_MODEL_SAVE_PATH}/{self._quantity_to_forecast}/"
+                f"{self._model_save_name}_architecture_inputs_{self._save_time}.json", "w"
+        ) as f:
+            json.dump(self._model_architecture_inputs, f)
+
+    @property
+    def _save_time(self):
+        return int(time.time())
 
     @abstractmethod
     def _define_loss_criterion(self):
@@ -100,10 +117,6 @@ class TorchForecaster(ABC, nn.Module):
 
     @abstractmethod
     def _initialise_optimiser(self):
-        return
-
-    @abstractmethod
-    def _forward_pass(self, x):
         return
 
     @property

@@ -1,7 +1,13 @@
+import joblib
+import time
+
 import torch
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+
+_MODEL_SAVE_PATH = "../trained_models"
 
 
 class ForecastingDataModel:
@@ -28,20 +34,21 @@ class ForecastingDataModel:
             num_timsteps_to_forecast
         )
 
-        scaled_features_and_labels = get_scaled_features_and_labels(features_and_labels, scaling_type)
+        if scaling_type is not None:
+             features_and_labels = get_scaled_features_and_labels(features_and_labels, scaling_type, self._quantity_to_forecast)
 
         return {
             "train_data": (
-                create_torch_tensors(scaled_features_and_labels["train"]["features"]),
-                create_torch_tensors(scaled_features_and_labels["train"]["labels"])
+                create_torch_tensors(features_and_labels["train"]["features"]),
+                create_torch_tensors(features_and_labels["train"]["labels"])
             ),
             "validation_data": (
-                create_torch_tensors(scaled_features_and_labels["validation"]["features"]),
-                create_torch_tensors(scaled_features_and_labels["validation"]["labels"])
+                create_torch_tensors(features_and_labels["validation"]["features"]),
+                create_torch_tensors(features_and_labels["validation"]["labels"])
             ),
             "test_data": (
-                create_torch_tensors(scaled_features_and_labels["test"]["features"]),
-                create_torch_tensors(scaled_features_and_labels["test"]["labels"])
+                create_torch_tensors(features_and_labels["test"]["features"]),
+                create_torch_tensors(features_and_labels["test"]["labels"])
             )
         }
 
@@ -136,19 +143,21 @@ def create_training_sequences_and_labels(data, quantity_name, num_lags, num_time
     return np.array(train_x), np.array(train_y)
 
 
-def get_scaled_features_and_labels(features_and_labels, scaling_type):
+def get_scaled_features_and_labels(features_and_labels, scaling_type, quantity):
     train_x_scaled, val_x_scaled, test_x_scaled = scaled_features(
         features_and_labels["train"]["features"],
         features_and_labels["validation"]["features"],
         features_and_labels["test"]["features"],
-        scaling_type=scaling_type
+        scaling_type=scaling_type,
+        quantity=quantity
     )
 
     train_y_scaled, val_y_scaled, test_y_scaled = scaled_labels(
         features_and_labels["train"]["labels"],
         features_and_labels["validation"]["labels"],
         features_and_labels["test"]["labels"],
-        scaling_type=scaling_type
+        scaling_type=scaling_type,
+        quantity=quantity
     )
 
     return {
@@ -167,7 +176,7 @@ def get_scaled_features_and_labels(features_and_labels, scaling_type):
         }
 
 
-def scaled_features(features_train, features_val, features_test, scaling_type):
+def scaled_features(features_train, features_val, features_test, scaling_type, quantity):
     scaler = scaling_type_to_scaler_map()[scaling_type]
 
     seq_len, num_features = features_train.shape[1], features_train.shape[2]
@@ -177,6 +186,7 @@ def scaled_features(features_train, features_val, features_test, scaling_type):
     test_x_reshape = features_test.reshape((features_test.shape[0] * seq_len, num_features))
 
     scaler.fit(train_x_reshape)
+    joblib.dump(scaler, f"{_MODEL_SAVE_PATH}/{quantity}/scalers/{scaling_type}_features.gz")
 
     train_x_scaled = scaler.transform(train_x_reshape).reshape((features_train.shape[0], seq_len, num_features))
     val_x_scaled = scaler.transform(val_x_reshape).reshape((features_val.shape[0], seq_len, num_features))
@@ -185,9 +195,11 @@ def scaled_features(features_train, features_val, features_test, scaling_type):
     return train_x_scaled, val_x_scaled, test_x_scaled
 
 
-def scaled_labels(labels_train, labels_val, labels_test, scaling_type):
+def scaled_labels(labels_train, labels_val, labels_test, scaling_type, quantity):
     scaler_y = scaling_type_to_scaler_map()[scaling_type]
     scaler_y.fit(labels_train)
+
+    joblib.dump(scaler_y, f"{_MODEL_SAVE_PATH}/{quantity}/scalers/{scaling_type}_labels.gz")
 
     return scaler_y.transform(labels_train), scaler_y.transform(labels_val), scaler_y.transform(labels_test)
 
