@@ -40,7 +40,7 @@ theme = {
 
 # mars_weather_data_df = get_latest_mars_weather_data()
 # mars_weather_data_df.to_csv("local_datasets/mars_weather_data_cleaned.csv")
-mars_weather_data_df = pd.read_csv("../local_datasets/mars_weather_data_cleaned.csv")
+mars_weather_data_df = pd.read_csv("local_datasets/mars_weather_data_cleaned.csv")
 
 sidebar = html.Div(
     [
