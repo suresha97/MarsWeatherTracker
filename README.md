@@ -5,6 +5,6 @@ in a web-application. The web-application is updated with the latest weather dat
 
 The architecture below is used to automate the pocess of collecting, transforming, storing and retireving the data used in the web-application.
 
-![Test Image !](assets/mars_weather_tracker_architecture.png)
+![Test Image !](images/mars_weather_tracker_architecture.png)
 
 Models that forecast air and ground temperature on Mars, will be added soon...

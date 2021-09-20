@@ -19,9 +19,6 @@ def make_plotly_graph(parameters):
         parameters["plot"]["y"].append("predictions")
         parameters["column_labels"].append(f"Forecasted {get_quantity_value_from_label(parameters['plot']['y'][0])}")
 
-    # if parameters["display_color_map"] is not None:
-    #     parameters["plot"]["color"] = parameters["display_color_map"]
-
     if parameters["plot_type"] == "line":
         fig = px.line(**parameters["plot"])
 
