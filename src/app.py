@@ -110,6 +110,7 @@ app.layout = html.Div(
     ]
 )
 
+print(mars_weather_data_df.head())
 
 @app.callback(
     Output(component_id="mars_weather_data_over_time_graph", component_property="figure"),

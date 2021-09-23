@@ -7,4 +7,7 @@ The architecture below is used to automate the pocess of collecting, transformin
 
 ![Test Image !](images/mars_weather_tracker_architecture.png)
 
-Models that forecast air and ground temperature on Mars, will be added soon...
+
+Forecasts from trained models alongside observed data were visualised via a web-app (demo below): 
+
+![](app_demo.gif)
