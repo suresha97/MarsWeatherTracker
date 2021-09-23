@@ -8,6 +8,6 @@ The architecture below is used to automate the pocess of collecting, transformin
 ![Test Image !](images/mars_weather_tracker_architecture.png)
 
 
-Forecasts from trained models alongside observed data were visualised via a web-app (demo below): 
+Forecasts from trained models (RNN, LSTM) alongside daily observations of air temperature,ground temperature and pressure were visualised via a web-app (demo below): 
 
-![](app_demo.gif)
+![](images/app_demo.gif)
