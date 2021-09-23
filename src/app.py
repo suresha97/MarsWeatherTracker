@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output
 
 from utils.app_utils import make_plotly_graph, get_weather_forecasts, get_quantity_value_from_label
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])
+dash_app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 # styling the sidebar
@@ -40,7 +40,7 @@ theme = {
 
 # mars_weather_data_df = get_latest_mars_weather_data()
 # mars_weather_data_df.to_csv("local_datasets/mars_weather_data_cleaned.csv")
-mars_weather_data_df = pd.read_csv("local_datasets/mars_weather_data_cleaned.csv")
+mars_weather_data_df = pd.read_csv("../local_datasets/mars_weather_data_cleaned.csv")
 
 sidebar = html.Div(
     [
@@ -57,8 +57,21 @@ sidebar = html.Div(
                 {"label": "Pressure", "value": "pressure"}
             ],
             multi=False,
-            style={'width': "90%", "margin-left": "0.5rem"},
+            style={'width': "95%", "margin-left": "0.5rem"},
             placeholder="Select Quantity"
+        )),
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        dbc.Row(dcc.Dropdown(
+            id="select_model",
+            options=[
+                {"label": "RNN", "value": "rnn"},
+                {"label": "LSTM", "value": "lstm"},
+            ],
+            multi=False,
+            style={'width': "95%", "margin-left": "0.5rem"},
+            placeholder="Select Forecasting Model"
         )),
         html.Br(),
         html.Br(),
@@ -99,7 +112,7 @@ content = html.Div(
     dcc.Graph(id="mars_weather_data_over_time_graph", figure={}, style=CONTENT_STYLE)
 )
 
-app.layout = html.Div(
+dash_app.layout = html.Div(
     [
         html.Br(),
         html.H1("Mars Weather Tracker", style={'text-align': 'center'}),
@@ -110,16 +123,16 @@ app.layout = html.Div(
     ]
 )
 
-print(mars_weather_data_df.head())
 
-@app.callback(
+@dash_app.callback(
     Output(component_id="mars_weather_data_over_time_graph", component_property="figure"),
     [Input(component_id="select_quantity", component_property="value"),
+     Input(component_id="select_model", component_property="value"),
      Input(component_id="display_forecast", component_property="value"),
      Input(component_id="start_date", component_property="date"),
      Input(component_id="end_date", component_property="date")]
 )
-def update_graph(selected_quantity, display_forecast, start_date, end_date):
+def update_graph(selected_quantity, model_type, display_forecast, start_date, end_date):
     print(selected_quantity)
     print(display_forecast)
 
@@ -130,7 +143,7 @@ def update_graph(selected_quantity, display_forecast, start_date, end_date):
         ]
 
     if display_forecast is not None and "Display Forecast" in display_forecast:
-        model_predictions = get_weather_forecasts(mars_weather_data_filtered, "rnn", selected_quantity)
+        model_predictions = get_weather_forecasts(mars_weather_data_filtered, model_type, selected_quantity)
         mars_weather_data_filtered = mars_weather_data_filtered.iloc[len(mars_weather_data_filtered) - len(model_predictions):]
         mars_weather_data_filtered["predictions"] = model_predictions
 
@@ -160,4 +173,4 @@ def update_graph(selected_quantity, display_forecast, start_date, end_date):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    dash_app.run_server(debug=False, port=3004)
