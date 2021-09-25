@@ -1,11 +1,13 @@
+import os
+
 import pandas as pd
 import numpy as np
 
-from utils import load_json_from_s3_as_dict
+from utils.s3_utils import load_json_from_s3_as_dict
 from aws_rds.mars_weather_data_rds_database import MarsWeatherDataRDSDatabase
 
 
-def process_raw_mars_weather_data(raw_mars_weather_data):
+def process_raw_mars_weather_data(raw_mars_weather_data: pd.DataFrame) -> pd.DataFrame:
     raw_mars_weather_data_by_sol = raw_mars_weather_data["soles"]
     mars_weather_df_columns = list(raw_mars_weather_data_by_sol[0].keys())
     mars_weather_df = pd.DataFrame(raw_mars_weather_data_by_sol, columns=mars_weather_df_columns)
@@ -27,11 +29,11 @@ def lambda_handler(event, context):
     mars_weather_data = process_raw_mars_weather_data(raw_mars_weather_data)
 
     mars_weather_data_rds_database = MarsWeatherDataRDSDatabase(
-        "postgres",
-        "Unn11997*",
-        "mars-weather-data.c0wmlpzuprn2.eu-west-1.rds.amazonaws.com",
-        5432,
-        "curiosity_mars_weather_data"
+        f"{os.environ.get('USER')}",
+        f"{os.environ.get('PASSWORD')}",
+        f"{os.environ.get('DATABASE_HOST')}",
+        int(os.environ.get('DATABASE_PORT')),
+        f"{os.environ.get('DATABASE_NAME')}"
     )
     mars_weather_data_rds_database.create_new_table_from_dataframe(mars_weather_data, "curiosity_mars_weather_data")
 

@@ -1,7 +1,8 @@
+from typing import Tuple, Dict, Union
 import joblib
-import time
 
 import torch
+from torch import Tensor
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -11,13 +12,15 @@ _MODEL_SAVE_PATH = "../trained_models"
 
 
 class ForecastingDataModel:
-    def __init__(self, weather_data, start_date, end_date, quantity_to_forecast):
+    def __init__(self, weather_data: pd.DataFrame, start_date: str, end_date: str, quantity_to_forecast: str) -> None:
         self._weather_data = weather_data
         self._start_date = start_date
         self._end_date = end_date
         self._quantity_to_forecast = quantity_to_forecast
 
-    def get_torch_training_data(self, train_data_proportion, val_data_prop, num_lags, num_timsteps_to_forecast, scaling_type):
+    def get_torch_training_data(
+            self, train_data_proportion: float, val_data_prop: float, num_lags: int, num_timsteps_to_forecast: int, scaling_type: str
+    ) -> Dict[str, Tuple[Tensor, Tensor]]:
         relevant_weather_data = self._get_relevant_weather_data()
 
         relevant_weather_data_with_temporal_features = add_temporal_features_to_dataset(relevant_weather_data)
@@ -52,7 +55,7 @@ class ForecastingDataModel:
             )
         }
 
-    def _get_relevant_weather_data(self):
+    def _get_relevant_weather_data(self) -> pd.DataFrame:
         self._weather_data["terrestrial_date"] = pd.to_datetime(self._weather_data["terrestrial_date"])
         relevant_weather_data = self._weather_data[
             (self._weather_data.terrestrial_date > self._start_date) &
@@ -61,7 +64,9 @@ class ForecastingDataModel:
 
         return relevant_weather_data[["terrestrial_date", self._quantity_to_forecast]]
 
-    def _get_features_and_labels(self, data_splits, num_lags, num_timesteps_to_forecast):
+    def _get_features_and_labels(
+            self, data_splits: Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame], num_lags: int, num_timesteps_to_forecast: int
+    ) -> Dict[str, Dict[str, np.ndarray]]:
         train_data, val_data, test_data = data_splits
         train_x, train_y = create_training_sequences_and_labels(
             train_data, self._quantity_to_forecast, num_lags=num_lags, num_timesteps_to_forecast=num_timesteps_to_forecast
@@ -91,17 +96,17 @@ class ForecastingDataModel:
         }
 
 
-def add_temporal_features_to_dataset(weather_data):
+def add_temporal_features_to_dataset(weather_data: pd.DataFrame) -> pd.DataFrame:
     weather_data["timestamp"] = weather_data.terrestrial_date.apply(lambda x: x.timestamp())
 
     num_seconds_in_an_earth_year = 60 * 60 * 24 * 365.25
 
-    def sine_transformation(x):
+    def sine_transformation(x: float) -> float:
         return np.sin(
             (2 * np.pi * x) / num_seconds_in_an_earth_year
         )
 
-    def cos_transformation(x):
+    def cos_transformation(x: float) -> float:
         return np.cos(
             (2 * np.pi * x) / num_seconds_in_an_earth_year
         )
@@ -112,21 +117,25 @@ def add_temporal_features_to_dataset(weather_data):
     return weather_data
 
 
-def get_train_val_test_split(data, train_prop, val_prop):
+def get_train_val_test_split(
+        data: pd.DataFrame, train_prop: float, val_prop: float
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     train_data, test_data = create_train_test_split(data, train_prop=train_prop)
     val_data, test_data = create_train_test_split(test_data, train_prop=val_prop)
 
     return train_data, val_data, test_data
 
 
-def create_train_test_split(data, train_prop):
+def create_train_test_split(data: pd.DataFrame, train_prop: float) -> Tuple[pd.DataFrame, pd.DataFrame]:
     train_data_df = data.iloc[:int(len(data) * train_prop)]
     test_data_df = data.iloc[len(train_data_df):]
 
     return train_data_df, test_data_df
 
 
-def create_training_sequences_and_labels(data, quantity_name, num_lags, num_timesteps_to_forecast):
+def create_training_sequences_and_labels(
+        data: pd.DataFrame, quantity_name: str, num_lags: int, num_timesteps_to_forecast: int
+) -> Tuple[np.ndarray, np.ndarray]:
     train_x = []
     train_y = []
 
@@ -143,7 +152,9 @@ def create_training_sequences_and_labels(data, quantity_name, num_lags, num_time
     return np.array(train_x), np.array(train_y)
 
 
-def get_scaled_features_and_labels(features_and_labels, scaling_type, quantity):
+def get_scaled_features_and_labels(
+        features_and_labels: Dict[str, Dict], scaling_type: str, quantity: str
+) -> Dict[str, Dict[str, np.ndarray]]:
     train_x_scaled, val_x_scaled, test_x_scaled = scaled_features(
         features_and_labels["train"]["features"],
         features_and_labels["validation"]["features"],
@@ -176,7 +187,9 @@ def get_scaled_features_and_labels(features_and_labels, scaling_type, quantity):
         }
 
 
-def scaled_features(features_train, features_val, features_test, scaling_type, quantity):
+def scaled_features(
+        features_train: np.ndarray, features_val: np.ndarray, features_test: np.ndarray, scaling_type: str, quantity: str
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     scaler = scaling_type_to_scaler_map()[scaling_type]
 
     seq_len, num_features = features_train.shape[1], features_train.shape[2]
@@ -195,7 +208,9 @@ def scaled_features(features_train, features_val, features_test, scaling_type, q
     return train_x_scaled, val_x_scaled, test_x_scaled
 
 
-def scaled_labels(labels_train, labels_val, labels_test, scaling_type, quantity):
+def scaled_labels(
+        labels_train: np.ndarray, labels_val: np.ndarray, labels_test: np.ndarray, scaling_type: str, quantity: str
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     scaler_y = scaling_type_to_scaler_map()[scaling_type]
     scaler_y.fit(labels_train)
 
@@ -204,12 +219,12 @@ def scaled_labels(labels_train, labels_val, labels_test, scaling_type, quantity)
     return scaler_y.transform(labels_train), scaler_y.transform(labels_val), scaler_y.transform(labels_test)
 
 
-def scaling_type_to_scaler_map():
+def scaling_type_to_scaler_map() -> Dict[str, Union[MinMaxScaler, StandardScaler]]:
     return {
         "normalisation": MinMaxScaler(),
         "standardisation": StandardScaler()
     }
 
 
-def create_torch_tensors(data):
+def create_torch_tensors(data) -> Tensor:
     return torch.tensor(data, dtype=torch.float)

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Dict, Tuple, Any
 import json
 import time
 
@@ -6,12 +7,18 @@ import sklearn.metrics as metrics
 import torch
 from torch.utils.data import TensorDataset, DataLoader
 import torch.nn as nn
+from torch import Tensor
 
 _MODEL_SAVE_PATH = "../trained_models"
 
 
 class TorchTrainer(ABC, nn.Module):
-    def __init__(self, training_parameters, forecasting_data, quantity_to_forecast):
+    def __init__(
+            self,
+            training_parameters: Dict[str, Any],
+            forecasting_data: Dict[str, Tuple[Tensor, Tensor]],
+            quantity_to_forecast: str
+    ) -> None:
         super().__init__()
         super(ABC, self).__init__()
         self._training_parameters = training_parameters
@@ -19,14 +26,14 @@ class TorchTrainer(ABC, nn.Module):
         self._train_loader = self._get_torch_data_loader(self._training_parameters["batch_size"])
         self._quantity_to_forecast = quantity_to_forecast
 
-    def _get_torch_data_loader(self, batch_size, shuffle=False):
+    def _get_torch_data_loader(self, batch_size: int, shuffle: bool = False) -> DataLoader:
         train_features, train_labels = self._forecasting_data["train_data"]
         dataset = TensorDataset(train_features, train_labels)
         dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
         return dataloader
 
-    def train_model(self):
+    def train_model(self) -> None:
         training_loss_over_epochs = []
         validation_loss_over_epochs = []
 
@@ -74,11 +81,11 @@ class TorchTrainer(ABC, nn.Module):
                 )
                 break
 
-    def predict(self, prediction_features):
+    def predict(self, prediction_features: Tensor) -> Tensor:
         self._model.eval()
         return self._model.forward(prediction_features)
 
-    def evaluate_model(self):
+    def evaluate_model(self) -> None:
         test_features, test_labels = self._forecasting_data["test_data"]
         test_set_predictions = self.predict(test_features).detach().numpy()
 
@@ -94,13 +101,13 @@ class TorchTrainer(ABC, nn.Module):
             }
         )
 
-    def save_model(self):
+    def save_model(self) -> None:
         torch.save(
             self._model.state_dict(), f"{_MODEL_SAVE_PATH}/{self._quantity_to_forecast}/"
                                       f"{self._model_save_name}_{self._save_time}.pt"
         )
 
-    def save_model_architecture(self):
+    def save_model_architecture(self) -> None:
         with open(
                 f"{_MODEL_SAVE_PATH}/{self._quantity_to_forecast}/"
                 f"{self._model_save_name}_architecture_inputs_{self._save_time}.json", "w"
@@ -108,18 +115,18 @@ class TorchTrainer(ABC, nn.Module):
             json.dump(self._model_architecture_inputs, f)
 
     @property
-    def _save_time(self):
+    def _save_time(self) -> int:
         return int(time.time())
 
     @abstractmethod
-    def _define_loss_criterion(self):
+    def _define_loss_criterion(self) -> None:
         return
 
     @abstractmethod
-    def _initialise_optimiser(self):
+    def _initialise_optimiser(self) -> None:
         return
 
     @property
     @abstractmethod
-    def _model_save_name(self):
+    def _model_save_name(self) -> None:
         return

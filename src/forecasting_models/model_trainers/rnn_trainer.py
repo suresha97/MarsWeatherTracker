@@ -1,14 +1,22 @@
-import time
+from typing import Dict, Tuple, Any
 
 import torch.nn as nn
 import torch.optim as optim
+from torch import Tensor
+from torch.nn import MSELoss
+from torch.optim import AdamW
 
 from forecasting_models.model_trainers.torch_trainer import TorchTrainer
 from forecasting_models.models.rnn_model import RNNModel
 
 
 class RNNTrainer(TorchTrainer):
-    def __init__(self, training_parameters, forecasting_data, quantity_to_forecast):
+    def __init__(
+            self,
+            training_parameters: Dict[str, Any],
+            forecasting_data: Dict[str, Tuple[Tensor, Tensor]],
+            quantity_to_forecast: str
+    ) -> None:
         super().__init__(training_parameters, forecasting_data, quantity_to_forecast)
         self._quantity_to_forecast = quantity_to_forecast
         self._output_size = 1
@@ -25,10 +33,10 @@ class RNNTrainer(TorchTrainer):
 
         self._model = RNNModel(self._model_architecture_inputs)
 
-    def _define_loss_criterion(self):
+    def _define_loss_criterion(self) -> MSELoss:
         return nn.MSELoss()
 
-    def _initialise_optimiser(self):
+    def _initialise_optimiser(self) -> AdamW:
         return optim.AdamW(
             self.parameters(),
             lr=self._training_parameters["learning_rate"],
@@ -36,5 +44,5 @@ class RNNTrainer(TorchTrainer):
         )
 
     @property
-    def _model_save_name(self):
+    def _model_save_name(self) -> str:
         return "rnn_model"
