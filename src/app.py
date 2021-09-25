@@ -1,49 +1,22 @@
 from datetime import date
 
-import pandas as pd
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+from matplotlib.pyplot import Figure
 
-from utils.app_utils import make_plotly_graph, get_weather_forecasts, get_quantity_value_from_label
+from assets.app_style import SIDEBAR_STYLE, CONTENT_STYLE
+from utils.app_utils import get_latest_mars_weather_data, make_plotly_graph, get_weather_forecasts, \
+    get_quantity_value_from_label
+
 
 dash_app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])
 
-# the style arguments for the sidebar. We use position:fixed and a fixed width
-# styling the sidebar
-SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": 0,
-    "left": 0,
-    "bottom": 0,
-    "width": "16rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-}
-
-# padding for the page content
-CONTENT_STYLE = {
-    "margin-left": "18rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
-}
-
-theme = {
-    'dark': True,
-    'detail': '#007439',
-    'primary': '#00EA64',
-    'secondary': '#6E6E6E',
-}
-
-
-# mars_weather_data_df = get_latest_mars_weather_data()
-# mars_weather_data_df.to_csv("local_datasets/mars_weather_data_cleaned.csv")
-mars_weather_data_df = pd.read_csv("../local_datasets/mars_weather_data_cleaned.csv")
-
 sidebar = html.Div(
     [
+        html.Br(),
         html.Br(),
         html.H2("Controls", className="display-6"),
         html.Hr(),
@@ -57,21 +30,38 @@ sidebar = html.Div(
                 {"label": "Pressure", "value": "pressure"}
             ],
             multi=False,
-            style={'width': "95%", "margin-left": "0.5rem"},
+            style={'width': "95%", "margin-left": "0.5rem", "font-size": 16},
             placeholder="Select Quantity"
         )),
         html.Br(),
         html.Br(),
         html.Br(),
         dbc.Row(dcc.Dropdown(
-            id="select_model",
+            id="select_plot_type",
             options=[
-                {"label": "RNN", "value": "rnn"},
-                {"label": "LSTM", "value": "lstm"},
+                {"label": "Line Plot", "value": "line"},
+                {"label": "Scatter Plot", "value": "scatter"},
             ],
             multi=False,
-            style={'width': "95%", "margin-left": "0.5rem"},
-            placeholder="Select Forecasting Model"
+            style={'width': "95%", "margin-left": "0.5rem", "font-size": 16},
+            placeholder="Select Visualisation Method"
+        )),
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        dbc.Row(dcc.Dropdown(
+            id="select_colormap_quantity",
+            options=[
+                {"label": "Min Air Temperature", "value": "min_temp"},
+                {"label": "Max Air Temperature", "value": "max_temp"},
+                {"label": "Min Ground Temperature", "value": "min_gts_temp"},
+                {"label": "Max Ground Temperature", "value": "max_gts_temp"},
+                {"label": "Pressure", "value": "pressure"}
+            ],
+            multi=False,
+            style={'width': "95%", "margin-left": "0.5rem", "font-size": 16},
+            placeholder="Select Colormap Quantity",
+            value=None
         )),
         html.Br(),
         html.Br(),
@@ -96,12 +86,25 @@ sidebar = html.Div(
         html.Br(),
         html.Br(),
         html.Br(),
+        dbc.Row(dcc.Dropdown(
+            id="select_model",
+            options=[
+                {"label": "RNN", "value": "rnn"},
+                {"label": "LSTM", "value": "lstm"},
+            ],
+            multi=False,
+            style={'width': "95%", "margin-left": "0.5rem", "font-size": 16},
+            placeholder="Select Forecasting Model"
+        )),
+        html.Br(),
+        html.Br(),
+        html.Br(),
         dbc.Row(dcc.Checklist(
             id="display_forecast",
             options=[
                 {"label": "Display Forecast", "value": "Display Forecast"}
             ],
-            style={'width': "90%", "margin-left": "1rem"},
+            style={'width': "90%", "margin-left": "1rem", "font-size": 16},
             labelStyle={'display': 'inline-block'}
         )),
     ],
@@ -127,14 +130,23 @@ dash_app.layout = html.Div(
 @dash_app.callback(
     Output(component_id="mars_weather_data_over_time_graph", component_property="figure"),
     [Input(component_id="select_quantity", component_property="value"),
-     Input(component_id="select_model", component_property="value"),
-     Input(component_id="display_forecast", component_property="value"),
+     Input(component_id="select_plot_type", component_property="value"),
+     Input(component_id="select_colormap_quantity", component_property="value"),
      Input(component_id="start_date", component_property="date"),
-     Input(component_id="end_date", component_property="date")]
+     Input(component_id="end_date", component_property="date"),
+     Input(component_id="select_model", component_property="value"),
+     Input(component_id="display_forecast", component_property="value")]
 )
-def update_graph(selected_quantity, model_type, display_forecast, start_date, end_date):
-    print(selected_quantity)
-    print(display_forecast)
+def update_graph(
+        selected_quantity: str,
+        plot_type: str,
+        colormap_quantity: str,
+        start_date: str,
+        end_date: str,
+        model_type: str,
+        display_forecast: str,
+) -> Figure:
+    mars_weather_data_df = get_latest_mars_weather_data()
 
     mars_weather_data_filtered = mars_weather_data_df.copy()
     mars_weather_data_filtered = mars_weather_data_df[
@@ -149,12 +161,9 @@ def update_graph(selected_quantity, model_type, display_forecast, start_date, en
 
     quantity_value_to_label_map = get_quantity_value_from_label(selected_quantity)
 
-    print(mars_weather_data_filtered.columns)
-
-    # Note: Color map can only be used with scatter plot
     fig = make_plotly_graph(
         {
-            "plot_type": "line",
+            "plot_type": plot_type,
             "plot": {
                 "data_frame": mars_weather_data_filtered,
                 "x": "terrestrial_date",
@@ -163,9 +172,11 @@ def update_graph(selected_quantity, model_type, display_forecast, start_date, en
                     "terrestrial_date": "Date",
                     "value": quantity_value_to_label_map
                 },
+                "template": "plotly_dark"
             },
             "column_labels": [f"Observed {quantity_value_to_label_map}"],
-            "display_forecast": display_forecast
+            "display_forecast": display_forecast,
+            "colormap_quantity": colormap_quantity
         }
     )
 
