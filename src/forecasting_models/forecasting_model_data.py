@@ -226,5 +226,5 @@ def scaling_type_to_scaler_map() -> Dict[str, Union[MinMaxScaler, StandardScaler
     }
 
 
-def create_torch_tensors(data) -> Tensor:
+def create_torch_tensors(data: np.ndarray) -> Tensor:
     return torch.tensor(data, dtype=torch.float)
