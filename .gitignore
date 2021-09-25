@@ -134,3 +134,7 @@ dmypy.json
 # AWS Deployment
 aws_deployment/lambda_code_uri
 .aws-sam
+
+# Local
+local_datasets
+trained_models
