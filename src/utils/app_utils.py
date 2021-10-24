@@ -40,11 +40,13 @@ def make_plotly_graph(parameters: Dict[str, Any]) -> Figure:
                     "title": get_quantity_value_from_label(parameters["colormap_quantity"])
                 }
             )
+
+    for i, new_name in enumerate(parameters["column_labels"]):
+        fig.data[i].name = new_name
+
     fig.update_layout(
         showlegend=False
     )
-    # for i, new_name in enumerate(parameters["column_labels"]):
-    #     fig.data[i].name = new_name
 
     return fig
 
