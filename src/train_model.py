@@ -1,6 +1,6 @@
 import pandas as pd
 
-from forecasting_models.forecasting_model_data import ForecastingDataModel
+from forecasting_models.forecasting_model_data import ForecastingModelData
 from forecasting_models.model_trainers.rnn_trainer import RNNTrainer
 from forecasting_models.model_trainers.lstm_trainer import LSTMTrainer
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     local_weather_dataset = pd.read_csv("../local_datasets/mars_weather_data_cleaned.csv")
 
-    forecasting_data_model = ForecastingDataModel(
+    forecasting_data_model = ForecastingModelData(
         local_weather_dataset,
         start_date,
         end_date,

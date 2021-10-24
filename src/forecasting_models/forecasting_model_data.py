@@ -11,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 _MODEL_SAVE_PATH = "../trained_models"
 
 
-class ForecastingDataModel:
+class ForecastingModelData:
     def __init__(self, weather_data: pd.DataFrame, start_date: str, end_date: str, quantity_to_forecast: str) -> None:
         self._weather_data = weather_data
         self._start_date = start_date
